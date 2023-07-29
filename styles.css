@@ -1,10 +1,70 @@
 /* Add your custom styles here */
 body {
+  font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  line-height: 1.6;
+  background-color: #fce100; /* Main color (Yellow) */
+  color: #333;
 }
 
-canvas {
-  display: block;
+header {
+  background-color: #ff665e; /* Complementary color (Red) */
+  color: #fff;
+  text-align: center;
+  padding: 1rem 0;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+nav li {
+  display: inline-block;
+  margin: 0 1rem;
+}
+
+nav a {
+  text-decoration: none;
+  color: #fff;
+  font-size: 1.1rem;
+  padding: 0.5rem;
+  border-bottom: 2px solid transparent;
+  transition: border-bottom 0.3s ease;
+}
+
+nav a:hover {
+  border-bottom: 2px solid #fff;
+}
+
+main {
+  padding: 2rem;
+}
+
+section {
+  margin-bottom: 2rem;
+}
+
+section h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+section p {
+  font-size: 1.1rem;
+  line-height: 1.8;
+}
+
+footer {
+  background-color: #5564a1; /* Tetradic color (Purple) */
+  color: #fff;
+  text-align: center;
+  padding: 1rem 0;
 }
