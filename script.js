@@ -1,88 +1,61 @@
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
+var game = {
+    data: {
+        score : 0,
+        steps: 0,
+        start: false,
+        newHiScore: false,
+        muted: false
+    },
 
-// Set canvas size
-canvas.width = 480;
-canvas.height = 640;
+    resources: [
+            // images
+        {name: "bg", type:"image", src: "data/img/bg.png"},
+        {name: "clumsy", type:"image", src: "data/img/clumsy.png"},
+        {name: "pipe", type:"image", src: "data/img/pipe.png"},
+        {name: "logo", type:"image", src: "data/img/logo.png"},
+        {name: "ground", type:"image", src: "data/img/ground.png"},
+        {name: "gameover", type:"image", src: "data/img/gameover.png"},
+        {name: "gameoverbg", type:"image", src: "data/img/gameoverbg.png"},
+        {name: "hit", type:"image", src: "data/img/hit.png"},
+        {name: "getready", type:"image", src: "data/img/getready.png"},
+        {name: "new", type:"image", src: "data/img/new.png"},
+        {name: "share", type:"image", src: "data/img/share.png"},
+        {name: "tweet", type:"image", src: "data/img/tweet.png"},
+        // sounds
+        {name: "theme", type: "audio", src: "data/bgm/"},
+        {name: "hit", type: "audio", src: "data/sfx/"},
+        {name: "lose", type: "audio", src: "data/sfx/"},
+        {name: "wing", type: "audio", src: "data/sfx/"},
 
-// Game variables
-let birdY = canvas.height / 2;
-let birdDY = 0;
-const gravity = 0.5;
-const jumpStrength = -8;
-const pipeGap = 200;
-let score = 0;
-let pipes = [];
+    ],
 
-// Main game loop
-function gameLoop() {
-  // Clear the canvas
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+    "onload": function() {
+        if (!me.video.init(900, 600, {
+            wrapper: "screen",
+            scale : "auto",
+            scaleMethod: "fit"
+        })) {
+            alert("Your browser does not support HTML5 canvas.");
+            return;
+        }
+        me.audio.init("mp3,ogg");
+        me.loader.preload(game.resources, this.loaded.bind(this));
+    },
 
-  // Bird logic
-  birdDY += gravity;
-  birdY += birdDY;
+    "loaded": function() {
+        me.state.set(me.state.MENU, new game.TitleScreen());
+        me.state.set(me.state.PLAY, new game.PlayScreen());
+        me.state.set(me.state.GAME_OVER, new game.GameOverScreen());
 
-  // Draw the bird
-  ctx.fillStyle = "#FF0000";
-  ctx.fillRect(50, birdY, 40, 40);
+        me.input.bindKey(me.input.KEY.SPACE, "fly", true);
+        me.input.bindKey(me.input.KEY.M, "mute", true);
+        me.input.bindPointer(me.input.KEY.SPACE);
 
-  // Pipe logic
-  if (frames % 100 === 0) {
-    const pipeY = Math.random() * (canvas.height - pipeGap);
-    pipes.push({ x: canvas.width, y: pipeY });
-  }
+        me.pool.register("clumsy", game.BirdEntity);
+        me.pool.register("pipe", game.PipeEntity, true);
+        me.pool.register("hit", game.HitEntity, true);
+        me.pool.register("ground", game.Ground, true);
 
-  for (let i = 0; i < pipes.length; i++) {
-    pipes[i].x -= 3;
-
-    // Collisions
-    if (
-      birdY < pipes[i].y ||
-      birdY + 40 > pipes[i].y + pipeGap ||
-      pipes[i].x < 50 + 40
-    ) {
-      gameOver();
-      return;
+        me.state.change(me.state.MENU);
     }
-
-    // Passed a pipe
-    if (pipes[i].x === 50) {
-      score++;
-    }
-
-    // Draw pipes
-    ctx.fillStyle = "#00FF00";
-    ctx.fillRect(pipes[i].x, 0, 50, pipes[i].y);
-    ctx.fillRect(pipes[i].x, pipes[i].y + pipeGap, 50, canvas.height);
-  }
-
-  // Draw score
-  ctx.fillStyle = "#000";
-  ctx.font = "24px Arial";
-  ctx.fillText("Score: " + score, 10, 30);
-
-  // Request next animation frame
-  requestAnimationFrame(gameLoop);
-}
-
-// Game over
-function gameOver() {
-  alert("Game Over. Score: " + score);
-  birdY = canvas.height / 2;
-  birdDY = 0;
-  score = 0;
-  pipes = [];
-  gameLoop();
-}
-
-// Bird jump
-function jump() {
-  birdDY = jumpStrength;
-}
-
-// Event listeners
-document.addEventListener("keydown", jump);
-
-// Start the game loop
-gameLoop();
+};
